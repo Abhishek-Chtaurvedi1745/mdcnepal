@@ -1,0 +1,4 @@
+[23-Sep-2021 02:43:13 America/Chicago] PHP Parse error:  syntax error, unexpected 'exit' (T_EXIT), expecting ',' or ';' in /home4/stockzlz/public_html/web/hyderabadtrolley.com/admin/scripts/cron/user_wallet.php on line 128
+[23-Sep-2021 02:43:14 America/Chicago] PHP Parse error:  syntax error, unexpected 'exit' (T_EXIT), expecting ',' or ';' in /home4/stockzlz/public_html/web/hyderabadtrolley.com/admin/scripts/cron/user_wallet.php on line 128
+[23-Sep-2021 02:43:15 America/Chicago] PHP Parse error:  syntax error, unexpected 'exit' (T_EXIT), expecting ',' or ';' in /home4/stockzlz/public_html/web/hyderabadtrolley.com/admin/scripts/cron/user_wallet.php on line 128
+[23-Sep-2021 02:43:17 America/Chicago] PHP Parse error:  syntax error, unexpected 'exit' (T_EXIT), expecting ',' or ';' in /home4/stockzlz/public_html/web/hyderabadtrolley.com/admin/scripts/cron/user_wallet.php on line 128

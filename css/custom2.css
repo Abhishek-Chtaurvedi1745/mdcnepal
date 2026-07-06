@@ -1,0 +1,137 @@
+:root {
+    --thm-light: #F6FEFF;
+    --main-color: #38A7BB;
+    --sec-color: #47D4ED;
+    --tx-color: #5E5E5E;
+}
+
+.bg-thm {
+    background: var(--main-color);
+}
+
+.bg-thm-light {
+    background: var(--thm-light);
+}
+
+.tx-thm {
+    color: var(--main-color);
+}
+
+.tx-sec-thm {
+    color: var(--sec-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    color: var(--tx-color);
+}
+
+.common-heading h1 {
+    font-size: 38px;
+}
+
+.common-heading h2,
+.common-heading h3,
+.common-heading h4,
+.common-heading h5,
+.common-heading p {
+    color: var(--tx-color);
+    font-weight: 600;
+}
+
+.common-heading h2,
+.common-heading-2 h2 {
+    font-size: 36px;
+    color: var(--tx-color);
+}
+
+ 
+
+.about-lead-gen .small .statistics span {
+    color: var(--main-color);
+    font-weight: 600;
+}
+
+.about-lead-gen .small .statistics p {
+    color: var(--sec-color);
+    font-size: 18px;
+}
+
+.comm-list li {
+    margin: 11px 0;
+    font-size: 18px;
+    color: var(--tx-color);
+}
+
+.comm-list {
+    padding-left: 26px;
+}
+
+.comm-list li {
+    position: relative;
+}
+
+.comm-list li::before {
+    content: "\f00c";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    top: 0;
+    left: -26px;
+    font-size: 16px;
+    color: var(--main-color);
+}
+
+.new-icon {
+    width: 29px;
+    height: 29px;
+    margin-right: 10px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main-color);
+    position: relative;
+}
+
+.new-icon img {
+    width: 15px;
+    height: 15px;
+    object-fit: cover;
+}
+
+.contact-info .inside .media-body a,
+.contact-info .inside .media-body span {
+    font-size: 18px;
+    color: var(--tx-color);
+    font-weight: 600;
+}
+
+.contact-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    background: linear-gradient(white, white) padding-box,linear-gradient(to right, var(--sec-color), var(--main-color)) border-box;
+    border: 3px solid transparent;
+}
+.location-card{
+    border-radius: 14px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.125);
+    padding: 5px;
+}
+.map-div iframe{
+    height: 450px;
+    border-radius: 14px;
+}
+.new-section{
+    padding: 200px 0;
+}
+.contact-area{
+    background: url(.././images/contact/contact-banner.png) center center no-repeat;
+    background-size: cover;
+}

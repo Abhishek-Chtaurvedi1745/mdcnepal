@@ -1,0 +1,1 @@
+[08-Jun-2021 08:19:56 US/Eastern] PHP Warning:  Declaration of InputFilter::get_instance() should be compatible with & Singleton::get_instance() in /home1/evoqaghj/public_html/demo/grocery/3rdparty/inputfilter/inputfilter.php on line 559
