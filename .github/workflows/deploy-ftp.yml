@@ -13,6 +13,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
 
     steps:
       - name: Checkout repository
@@ -29,13 +30,14 @@ jobs:
           security: loose
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           local-dir: ./
-          timeout: 120000
-          log-level: verbose
+          timeout: 1200000
+          log-level: minimal
           exclude: |
             **/.git*
             **/.github/**
-            **/uploads/**
+            logs/**
             **/logs/**
+            cache/**
             **/cache/**
             **/*.sql
             **/*.sql.gz
@@ -45,3 +47,4 @@ jobs:
             **/test_db.php
             **/scripts/sync_missing_uploads.php
             **/.gitignore
+            **/.ftpquota
