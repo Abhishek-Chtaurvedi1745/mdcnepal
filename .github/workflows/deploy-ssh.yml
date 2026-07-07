@@ -19,88 +19,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH key and agent
+      - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KEY_PASSPHRASE: ${{ secrets.SSH_KEY_PASSPHRASE }}
         run: |
-          set -euo pipefail
-
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "ERROR: SSH_PRIVATE_KEY secret is empty"
-            exit 1
-          fi
+          set -e
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          # Write key (strip Windows CRLF). Supports raw PEM or base64-encoded PEM.
-          if echo "$SSH_PRIVATE_KEY" | tr -d '\r' | grep -q "BEGIN.*PRIVATE KEY"; then
-            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
-          elif echo "$SSH_PRIVATE_KEY" | tr -d '\r' | base64 -d > ~/.ssh/deploy_key 2>/dev/null; then
-            echo "Decoded SSH_PRIVATE_KEY from base64"
-          else
-            echo "ERROR: SSH_PRIVATE_KEY is not valid PEM or base64"
-            exit 1
-          fi
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
-          KEY_LINES=$(wc -l < ~/.ssh/deploy_key | tr -d ' ')
-          if [ "$KEY_LINES" -lt 4 ]; then
-            echo "ERROR: Private key has only $KEY_LINES lines."
-            echo "GitHub secret lost newlines. Re-paste the key OR use base64 (see repo docs)."
-            echo "First chars: $(head -c 40 ~/.ssh/deploy_key)..."
-            exit 1
-          fi
-
-          if ! grep -q "BEGIN.*PRIVATE KEY" ~/.ssh/deploy_key; then
-            echo "ERROR: Missing -----BEGIN ... PRIVATE KEY----- header"
-            exit 1
-          fi
-          if ! grep -q "END.*PRIVATE KEY" ~/.ssh/deploy_key; then
-            echo "ERROR: Missing -----END ... PRIVATE KEY----- footer"
-            echo "Base64 may be truncated — copy the full PowerShell output (one line, no spaces)."
-            exit 1
-          fi
-
-          KEY_ENCRYPTED=false
-          if grep -q "ENCRYPTED" ~/.ssh/deploy_key; then
-            KEY_ENCRYPTED=true
-            echo "Encrypted private key detected"
-            if [ -z "${SSH_KEY_PASSPHRASE:-}" ]; then
-              echo "ERROR: Key has a passphrase. Add GitHub secret SSH_KEY_PASSPHRASE"
-              exit 1
-            fi
-          elif ! ssh-keygen -lf ~/.ssh/deploy_key > /dev/null 2>&1; then
-            echo "ERROR: File is not a valid SSH private key"
-            exit 1
-          else
-            ssh-keygen -lf ~/.ssh/deploy_key
-          fi
+          echo "Checking private key..."
+          ssh-keygen -lf ~/.ssh/deploy_key
 
           eval "$(ssh-agent -s)"
-          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
-          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          ssh-add ~/.ssh/deploy_key
 
-          if [ "$KEY_ENCRYPTED" = true ]; then
-            sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
-            printf '%s\n' "$SSH_KEY_PASSPHRASE" > /tmp/key_pass.txt
-            chmod 600 /tmp/key_pass.txt
-            cat > /tmp/askpass.sh << 'SCRIPT'
-          #!/bin/sh
-          cat /tmp/key_pass.txt
-          SCRIPT
-            chmod +x /tmp/askpass.sh
-            DISPLAY=:0 SSH_ASKPASS=/tmp/askpass.sh SSH_ASKPASS_REQUIRE=force \
-              ssh-add ~/.ssh/deploy_key < /dev/null
-          else
-            ssh-add ~/.ssh/deploy_key
-          fi
-
-          if ! ssh-add -l; then
-            echo "ERROR: ssh-add failed — wrong passphrase or corrupted key file"
-            exit 1
-          fi
+          echo "Loaded keys:"
+          ssh-add -l
 
       - name: Add server to known_hosts
         run: |
@@ -108,27 +46,31 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          ssh -p "${{ secrets.SSH_PORT }}" \
+          ssh \
+            -p "${{ secrets.SSH_PORT }}" \
+            -o StrictHostKeyChecking=yes \
             -o BatchMode=yes \
-            -o ConnectTimeout=30 \
             -o IdentitiesOnly=yes \
-            -o PreferredAuthentications=publickey \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "echo SSH_OK && pwd"
+            "echo 'SSH Connection Successful'; pwd"
 
-      - name: Deploy with rsync over SSH
+      - name: Deploy with rsync
         run: |
-          rsync -avzr --partial \
+          rsync -azv --delete \
             -e "ssh -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes" \
-            --exclude '.git' \
-            --exclude '.github' \
-            --exclude 'logs' \
-            --exclude 'cache' \
-            --exclude 'core/config.php' \
-            --exclude '*.sql' \
-            --exclude '*.sql.gz' \
-            --exclude '.gitignore' \
-            --exclude '.ftpquota' \
-            --exclude 'test_db.php' \
-            --exclude 'scripts/sync_missing_uploads.php' \
-            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}"
+            --exclude ".git" \
+            --exclude ".github" \
+            --exclude "logs" \
+            --exclude "cache" \
+            --exclude "core/config.php" \
+            --exclude "*.sql" \
+            --exclude "*.sql.gz" \
+            --exclude ".ftpquota" \
+            --exclude ".gitignore" \
+            --exclude "test_db.php" \
+            --exclude "scripts/sync_missing_uploads.php" \
+            ./ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}"
+
+      - name: Deployment Complete
+        run: echo "Deployment completed successfully."
