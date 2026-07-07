@@ -64,24 +64,29 @@ jobs:
             ssh-add ~/.ssh/deploy_key
           fi
 
+          echo "Keys loaded in ssh-agent:"
+          ssh-add -l
+
       - name: Add server to known_hosts
         run: |
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
         run: |
+          echo "Key fingerprint (compare with cPanel public key):"
+          ssh-keygen -lf ~/.ssh/deploy_key
           ssh -p "${{ secrets.SSH_PORT }}" \
             -o BatchMode=yes \
             -o ConnectTimeout=30 \
             -o IdentitiesOnly=yes \
-            -i ~/.ssh/deploy_key \
+            -o PreferredAuthentications=publickey \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
             "echo SSH_OK && pwd"
 
       - name: Deploy with rsync over SSH
         run: |
           rsync -avzr --partial \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes" \
             --exclude '.git' \
             --exclude '.github' \
             --exclude 'logs' \
