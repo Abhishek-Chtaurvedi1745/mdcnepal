@@ -19,15 +19,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy with rsync over SSH (RSA)
-        uses: burnett01/rsync-deployments@7.0.1
+      - name: Setup SSH agent (RSA key)
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          switches: -avzr --partial --exclude=.git --exclude=.github --exclude=logs --exclude=cache --exclude=core/config.php --exclude=*.sql --exclude=*.sql.gz --exclude=.gitignore --exclude=.ftpquota --exclude=test_db.php --exclude=scripts/sync_missing_uploads.php
-          path: ./
-          remote_path: ${{ secrets.SSH_REMOTE_PATH }}
-          remote_host: ${{ secrets.SSH_HOST }}
-          remote_port: ${{ secrets.SSH_PORT }}
-          remote_user: ${{ secrets.SSH_USER }}
-          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          remote_key_pass: ${{ secrets.SSH_KEY_PASSPHRASE }}
-          legacy_allow_rsa_hostkeys: true
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -vvv -p "${{ secrets.SSH_PORT }}" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=30 \
+            -o IdentitiesOnly=yes \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "echo SSH_OK && pwd && ls -la"
+
+      - name: Deploy with rsync over SSH
+        run: |
+          RSYNC_RSH="ssh -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes -o PubkeyAuthentication=yes"
+          export RSYNC_RSH
+          rsync -avzr --partial \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'logs' \
+            --exclude 'cache' \
+            --exclude 'core/config.php' \
+            --exclude '*.sql' \
+            --exclude '*.sql.gz' \
+            --exclude '.gitignore' \
+            --exclude '.ftpquota' \
+            --exclude 'test_db.php' \
+            --exclude 'scripts/sync_missing_uploads.php' \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}"
