@@ -30,7 +30,7 @@ jobs:
           security: loose
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           local-dir: ./
-          timeout: 1200000
+          timeout: 300000
           log-level: minimal
           exclude: |
             **/.git*
