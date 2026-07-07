@@ -59,25 +59,37 @@ jobs:
           fi
           if ! grep -q "END.*PRIVATE KEY" ~/.ssh/deploy_key; then
             echo "ERROR: Missing -----END ... PRIVATE KEY----- footer"
+            echo "Base64 may be truncated — copy the full PowerShell output (one line, no spaces)."
             exit 1
           fi
 
-          if ! ssh-keygen -lf ~/.ssh/deploy_key; then
+          KEY_ENCRYPTED=false
+          if grep -q "ENCRYPTED" ~/.ssh/deploy_key; then
+            KEY_ENCRYPTED=true
+            echo "Encrypted private key detected"
+            if [ -z "${SSH_KEY_PASSPHRASE:-}" ]; then
+              echo "ERROR: Key has a passphrase. Add GitHub secret SSH_KEY_PASSPHRASE"
+              exit 1
+            fi
+          elif ! ssh-keygen -lf ~/.ssh/deploy_key > /dev/null 2>&1; then
             echo "ERROR: File is not a valid SSH private key"
-            echo "Use cPanel Private Key (not public). Download .pem file and paste whole content."
             exit 1
+          else
+            ssh-keygen -lf ~/.ssh/deploy_key
           fi
 
           eval "$(ssh-agent -s)"
           echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
           echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
 
-          if [ -n "${SSH_KEY_PASSPHRASE:-}" ]; then
+          if [ "$KEY_ENCRYPTED" = true ]; then
             sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
-            cat > /tmp/askpass.sh << 'EOF'
+            printf '%s\n' "$SSH_KEY_PASSPHRASE" > /tmp/key_pass.txt
+            chmod 600 /tmp/key_pass.txt
+            cat > /tmp/askpass.sh << 'SCRIPT'
           #!/bin/sh
-          echo "$SSH_KEY_PASSPHRASE"
-          EOF
+          cat /tmp/key_pass.txt
+          SCRIPT
             chmod +x /tmp/askpass.sh
             DISPLAY=:0 SSH_ASKPASS=/tmp/askpass.sh SSH_ASKPASS_REQUIRE=force \
               ssh-add ~/.ssh/deploy_key < /dev/null
@@ -85,8 +97,10 @@ jobs:
             ssh-add ~/.ssh/deploy_key
           fi
 
-          echo "Keys loaded in ssh-agent:"
-          ssh-add -l
+          if ! ssh-add -l; then
+            echo "ERROR: ssh-add failed — wrong passphrase or corrupted key file"
+            exit 1
+          fi
 
       - name: Add server to known_hosts
         run: |
