@@ -13,36 +13,75 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH agent (RSA key)
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Validate SSH private key format
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "ERROR: SSH_PRIVATE_KEY secret is empty"
+            exit 1
+          fi
+          if ! echo "$SSH_PRIVATE_KEY" | grep -q "BEGIN.*PRIVATE KEY"; then
+            echo "ERROR: SSH_PRIVATE_KEY must include -----BEGIN ... PRIVATE KEY----- header"
+            exit 1
+          fi
+          if ! echo "$SSH_PRIVATE_KEY" | grep -q "END.*PRIVATE KEY"; then
+            echo "ERROR: SSH_PRIVATE_KEY must include -----END ... PRIVATE KEY----- footer"
+            exit 1
+          fi
+          echo "SSH key format looks correct"
+
+      - name: Setup SSH key and agent
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KEY_PASSPHRASE: ${{ secrets.SSH_KEY_PASSPHRASE }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+
+          if [ -n "$SSH_KEY_PASSPHRASE" ]; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+            cat > /tmp/askpass.sh << 'EOF'
+          #!/bin/sh
+          echo "$SSH_KEY_PASSPHRASE"
+          EOF
+            chmod +x /tmp/askpass.sh
+            DISPLAY=:0 SSH_ASKPASS=/tmp/askpass.sh SSH_ASKPASS_REQUIRE=force \
+              ssh-add ~/.ssh/deploy_key < /dev/null
+          else
+            ssh-add ~/.ssh/deploy_key
+          fi
 
       - name: Add server to known_hosts
         run: |
-          mkdir -p ~/.ssh
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
         run: |
-          ssh -vvv -p "${{ secrets.SSH_PORT }}" \
+          ssh -p "${{ secrets.SSH_PORT }}" \
             -o BatchMode=yes \
             -o ConnectTimeout=30 \
             -o IdentitiesOnly=yes \
+            -i ~/.ssh/deploy_key \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "echo SSH_OK && pwd && ls -la"
+            "echo SSH_OK && pwd"
 
       - name: Deploy with rsync over SSH
         run: |
-          RSYNC_RSH="ssh -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes -o PubkeyAuthentication=yes"
-          export RSYNC_RSH
           rsync -avzr --partial \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
             --exclude '.git' \
             --exclude '.github' \
             --exclude 'logs' \
