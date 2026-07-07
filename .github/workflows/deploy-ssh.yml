@@ -1,0 +1,33 @@
+name: Deploy via SSH rsync (fast)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ssh-deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy with rsync over SSH (RSA)
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --partial --exclude=.git --exclude=.github --exclude=logs --exclude=cache --exclude=core/config.php --exclude=*.sql --exclude=*.sql.gz --exclude=.gitignore --exclude=.ftpquota --exclude=test_db.php --exclude=scripts/sync_missing_uploads.php
+          path: ./
+          remote_path: ${{ secrets.SSH_REMOTE_PATH }}
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          legacy_allow_rsa_hostkeys: true
