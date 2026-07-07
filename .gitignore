@@ -1,0 +1,35 @@
+# Local-only config (production config stays on server)
+core/config.php
+
+# User content & runtime files
+uploads/
+logs/
+cache/
+*.log
+error_log
+
+# Database dumps
+*.sql
+*.sql.gz
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
+
+# Dependencies (if added later)
+node_modules/
+vendor/
+
+# Local / test scripts
+test_db.php
+scripts/sync_missing_uploads.php
+
+# Archives
+*.zip
+*.tar
+*.tar.gz

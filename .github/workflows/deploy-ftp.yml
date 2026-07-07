@@ -1,0 +1,44 @@
+name: Deploy to mdcnepal.com (FTP)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ftp-deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          local-dir: ./
+          log-level: minimal
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/uploads/**
+            **/logs/**
+            **/cache/**
+            **/*.sql
+            **/*.sql.gz
+            **/core/config.php
+            **/node_modules/**
+            **/vendor/**
+            **/test_db.php
+            **/scripts/sync_missing_uploads.php
+            **/.gitignore
