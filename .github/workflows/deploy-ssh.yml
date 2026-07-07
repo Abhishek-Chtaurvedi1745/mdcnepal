@@ -19,39 +19,60 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate SSH private key format
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "ERROR: SSH_PRIVATE_KEY secret is empty"
-            exit 1
-          fi
-          if ! echo "$SSH_PRIVATE_KEY" | grep -q "BEGIN.*PRIVATE KEY"; then
-            echo "ERROR: SSH_PRIVATE_KEY must include -----BEGIN ... PRIVATE KEY----- header"
-            exit 1
-          fi
-          if ! echo "$SSH_PRIVATE_KEY" | grep -q "END.*PRIVATE KEY"; then
-            echo "ERROR: SSH_PRIVATE_KEY must include -----END ... PRIVATE KEY----- footer"
-            exit 1
-          fi
-          echo "SSH key format looks correct"
-
       - name: Setup SSH key and agent
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_KEY_PASSPHRASE: ${{ secrets.SSH_KEY_PASSPHRASE }}
         run: |
+          set -euo pipefail
+
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "ERROR: SSH_PRIVATE_KEY secret is empty"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+
+          # Write key (strip Windows CRLF). Supports raw PEM or base64-encoded PEM.
+          if echo "$SSH_PRIVATE_KEY" | tr -d '\r' | grep -q "BEGIN.*PRIVATE KEY"; then
+            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          elif echo "$SSH_PRIVATE_KEY" | tr -d '\r' | base64 -d > ~/.ssh/deploy_key 2>/dev/null; then
+            echo "Decoded SSH_PRIVATE_KEY from base64"
+          else
+            echo "ERROR: SSH_PRIVATE_KEY is not valid PEM or base64"
+            exit 1
+          fi
           chmod 600 ~/.ssh/deploy_key
+
+          KEY_LINES=$(wc -l < ~/.ssh/deploy_key | tr -d ' ')
+          if [ "$KEY_LINES" -lt 4 ]; then
+            echo "ERROR: Private key has only $KEY_LINES lines."
+            echo "GitHub secret lost newlines. Re-paste the key OR use base64 (see repo docs)."
+            echo "First chars: $(head -c 40 ~/.ssh/deploy_key)..."
+            exit 1
+          fi
+
+          if ! grep -q "BEGIN.*PRIVATE KEY" ~/.ssh/deploy_key; then
+            echo "ERROR: Missing -----BEGIN ... PRIVATE KEY----- header"
+            exit 1
+          fi
+          if ! grep -q "END.*PRIVATE KEY" ~/.ssh/deploy_key; then
+            echo "ERROR: Missing -----END ... PRIVATE KEY----- footer"
+            exit 1
+          fi
+
+          if ! ssh-keygen -lf ~/.ssh/deploy_key; then
+            echo "ERROR: File is not a valid SSH private key"
+            echo "Use cPanel Private Key (not public). Download .pem file and paste whole content."
+            exit 1
+          fi
 
           eval "$(ssh-agent -s)"
           echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
           echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
 
-          if [ -n "$SSH_KEY_PASSPHRASE" ]; then
+          if [ -n "${SSH_KEY_PASSPHRASE:-}" ]; then
             sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
             cat > /tmp/askpass.sh << 'EOF'
           #!/bin/sh
@@ -73,8 +94,6 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          echo "Key fingerprint (compare with cPanel public key):"
-          ssh-keygen -lf ~/.ssh/deploy_key
           ssh -p "${{ secrets.SSH_PORT }}" \
             -o BatchMode=yes \
             -o ConnectTimeout=30 \
