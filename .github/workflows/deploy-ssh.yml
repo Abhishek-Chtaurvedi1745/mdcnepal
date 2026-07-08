@@ -33,7 +33,7 @@ jobs:
 
       - name: Add Server to known_hosts
         run: |
-          ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Test SSH Connection
@@ -41,26 +41,32 @@ jobs:
           ssh \
             -i ~/.ssh/deploy_key \
             -p ${{ secrets.SSH_PORT }} \
-            -o StrictHostKeyChecking=yes \
-            -o BatchMode=yes \
             -o IdentitiesOnly=yes \
+            -o PreferredAuthentications=publickey \
+            -o PasswordAuthentication=no \
+            -o StrictHostKeyChecking=yes \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "echo '✅ SSH Connection Successful'; whoami; pwd"
+            "echo 'SSH Connection Successful'; whoami; pwd"
 
       - name: Deploy Website
+        env:
+          RSYNC_RSH: ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o StrictHostKeyChecking=yes
         run: |
-          rsync -azv -- \
-            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes" \
+          rsync -azv \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "logs" \
             --exclude "cache" \
             --exclude ".ftpquota" \
+            --exclude ".gitignore" \
             --exclude "*.sql" \
             --exclude "*.sql.gz" \
-            --exclude ".gitignore" \
+            --exclude "uploads" \
+            --exclude ".env" \
+            --exclude "config.php" \
+            --exclude "core/config.php" \
             ./ \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}
 
-      - name: Done
-        run: echo "✅ Deployment completed successfully."
+      - name: Deployment Complete
+        run: echo "Deployment completed successfully."
