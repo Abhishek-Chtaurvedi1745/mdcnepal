@@ -1,18 +1,33 @@
-# Local-only config (production config stays on server)
-core/config.php
+# ==========================
+# Git metadata
+# ==========================
+.git
+.github
 
+# ==========================
+# Production config (server only)
+# ==========================
+core/config.php
+.env
+
+# ==========================
 # User content & runtime files
+# ==========================
 uploads/
 logs/
 cache/
 *.log
 error_log
 
+# ==========================
 # Database dumps
+# ==========================
 *.sql
 *.sql.gz
 
+# ==========================
 # OS / IDE
+# ==========================
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -21,15 +36,21 @@ desktop.ini
 *.swp
 *~
 
-# Dependencies (if added later)
+# ==========================
+# Dependencies
+# ==========================
 node_modules/
 vendor/
 
+# ==========================
 # Local / test scripts
+# ==========================
 test_db.php
 scripts/sync_missing_uploads.php
 
+# ==========================
 # Archives
+# ==========================
 *.zip
 *.tar
 *.tar.gz
