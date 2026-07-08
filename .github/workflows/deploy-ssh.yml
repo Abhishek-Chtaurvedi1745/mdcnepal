@@ -1,4 +1,4 @@
-name: Deploy via SSH rsync (fast)
+name: Deploy via SSH rsync
 
 on:
   push:
@@ -16,61 +16,51 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          set -e
-
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
-          echo "Checking private key..."
           ssh-keygen -lf ~/.ssh/deploy_key
 
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/deploy_key
-
-          echo "Loaded keys:"
-          ssh-add -l
-
-      - name: Add server to known_hosts
+      - name: Add Server to known_hosts
         run: |
-          ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
-      - name: Test SSH connection
+      - name: Test SSH Connection
         run: |
           ssh \
-            -p "${{ secrets.SSH_PORT }}" \
+            -i ~/.ssh/deploy_key \
+            -p ${{ secrets.SSH_PORT }} \
             -o StrictHostKeyChecking=yes \
             -o BatchMode=yes \
             -o IdentitiesOnly=yes \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "echo 'SSH Connection Successful'; pwd"
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "echo '✅ SSH Connection Successful'; whoami; pwd"
 
-      - name: Deploy with rsync
+      - name: Deploy Website
         run: |
           rsync -azv --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes" \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "logs" \
             --exclude "cache" \
-            --exclude "core/config.php" \
+            --exclude ".ftpquota" \
             --exclude "*.sql" \
             --exclude "*.sql.gz" \
-            --exclude ".ftpquota" \
             --exclude ".gitignore" \
-            --exclude "test_db.php" \
-            --exclude "scripts/sync_missing_uploads.php" \
             ./ \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}"
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}
 
-      - name: Deployment Complete
-        run: echo "Deployment completed successfully."
+      - name: Done
+        run: echo "✅ Deployment completed successfully."
