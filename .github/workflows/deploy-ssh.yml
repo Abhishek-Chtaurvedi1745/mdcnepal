@@ -49,7 +49,7 @@ jobs:
 
       - name: Deploy Website
         run: |
-          rsync -azv --delete \
+          rsync -azv -- \
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes" \
             --exclude ".git" \
             --exclude ".github" \
