@@ -260,7 +260,7 @@
 					  $image=$this->all_diseases[$i]['image'];
 					  $slug=$this->all_diseases[$i]['slug'];
 					  $folder='item_diseases';
-					  $item_diseases_img=$this->utility->get_disease_icon_path($image,$folder,"large",$slug,$name);
+					  $item_diseases_img=$this->utility->get_disease_icon_path($image,'large',$slug,$name);
 					  $url=SERVER_ROOT.'/diseases/'.$_SESSION['citySlug'].'/'.$slug.'';
 					  ?>
 				  <div class="items"><a href="<?=$url?>"><div class="imgDiv"><img src="<?=$item_diseases_img?>" alt="<?=$name?>"></div><span class="condition-item-label text-white"><?=$name?></span></a></div>

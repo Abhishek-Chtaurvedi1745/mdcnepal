@@ -83,7 +83,7 @@ if($id!='')
 
 	 {
 
-		$img='../uploads/item_diseases/thumb'.$image;		
+		$img=$app->utility->get_admin_upload_preview($image, 'item_diseases', $slug, $name, 'disease');
 
 		$file_class="fileupload-exists";		
 
