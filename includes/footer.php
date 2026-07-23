@@ -224,7 +224,7 @@ if (!in_array($currentPage, $pages)) {
 						<p class="text-white">Modern Diagnostic Centre
 							Nepal is a pioneer in the field
 							of pathology in Kathmandu.</p>
-						<h4 class="text-white pt">Follow in Us</h4>
+						<h4 class="text-white pt">Follow Us</h4>
 						<div class="social-icons pt-2">
 							<?php if($this->gs['facebook_link'] != '') { ?>
 								<a href="<?=$this->gs['facebook_link']?>" target="_blank" class="social-icon facebook-icon text-white me-2">
