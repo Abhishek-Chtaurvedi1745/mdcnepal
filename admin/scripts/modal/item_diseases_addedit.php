@@ -79,23 +79,13 @@ if($id!='')
 
 {
 
+	 $img=$app->utility->get_admin_upload_preview($image, 'item_diseases', $slug, $name, 'disease');
+
 	 if($image!='' &&  file_exists(ABS_PATH."/".$app->get_user_config("item_diseases").'/'.$image))
 
 	 {
 
-		$img='../uploads/item_diseases/thumb'.$image;		
-
 		$file_class="fileupload-exists";		
-
-		
-
-	 }
-
-	 else
-
-	 {
-
-		 $img=$app->utility->get_disease_icon_path($image, 'large', $slug, $name);
 
 	 }
 

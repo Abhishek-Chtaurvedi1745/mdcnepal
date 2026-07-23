@@ -6206,6 +6206,7 @@ function getproductprice_admin_2021($product_id,$product_unit)
 			'genetic' => 'genetic',
 			'parental' => 'genetic',
 			'pregnancy' => 'pregnancy',
+			'reproductive' => 'pregnancy',
 			'infertility' => 'pregnancy',
 			'abort' => 'pregnancy',
 			'bone' => 'bone-joints',
@@ -6261,11 +6262,36 @@ function getproductprice_admin_2021($product_id,$product_unit)
 	}
 
 	function get_category_icon_path($image_name, $type = 'large', $slug = '', $name = '') {
+		if (!in_array($type, array('', 'large', 'medium', 'thumb'), true)) {
+			$type = 'large';
+		}
+
 		if ($image_name != '' && file_exists(ABS_PATH . '/uploads/item_category/' . $image_name)) {
 			return $this->get_image_path($image_name, 'item_category', $type);
 		}
 
 		return $this->get_category_default_icon_path($type, $slug, $name);
+	}
+
+	function get_admin_upload_preview($image, $folder, $slug = '', $name = '', $icon_type = 'category') {
+		$upload_dir = ABS_PATH . '/uploads/' . $folder . '/';
+
+		if ($image != '' && file_exists($upload_dir . $image)) {
+			$thumb_file = $upload_dir . 'thumb' . $image;
+			$extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+
+			if ($extension !== 'svg' && file_exists($thumb_file)) {
+				return '../uploads/' . $folder . '/thumb' . $image;
+			}
+
+			return '../uploads/' . $folder . '/' . $image;
+		}
+
+		if ($icon_type === 'disease') {
+			return $this->get_disease_icon_path($image, 'large', $slug, $name);
+		}
+
+		return $this->get_category_icon_path($image, 'large', $slug, $name);
 	}
 
 	function seed_empty_category_icons() {
@@ -6317,6 +6343,10 @@ function getproductprice_admin_2021($product_id,$product_unit)
 	}
 
 	function get_disease_icon_path($image_name, $type = 'large', $slug = '', $name = '') {
+		if (!in_array($type, array('', 'large', 'medium', 'thumb'), true)) {
+			$type = 'large';
+		}
+
 		if ($image_name != '' && file_exists(ABS_PATH . '/uploads/item_diseases/' . $image_name)) {
 			return $this->get_image_path($image_name, 'item_diseases', $type);
 		}

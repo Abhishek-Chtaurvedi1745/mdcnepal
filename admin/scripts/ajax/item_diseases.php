@@ -136,7 +136,7 @@ if($get_actionType=="item_diseases_list")
 
 			$image=$result[$i]["image"];
 
-			$item_diseases_img=$app->utility->get_disease_icon_path($image,$folder,"",$result[$i]['slug'],$result[$i]['name']);
+			$item_diseases_img=$app->utility->get_disease_icon_path($image,'',$result[$i]['slug'],$result[$i]['name']);
 			
 			$item_department_ids=$app->utility->getDepartmentData($result[$i]["item_department_ids"]);
 

@@ -178,12 +178,11 @@
                             $image = $this->rs_item_diseases[$i]['image'];
                             $slug = $this->rs_item_diseases[$i]['slug'];
                             $folder = 'item_diseases';
-                            $item_diseases_img = $this->utility->get_image_path($image, $folder, "large");
+                            $item_diseases_img = $this->utility->get_disease_icon_path($image, 'large', $slug, $name);
                             $url = SERVER_ROOT . '/diseases/' . $_SESSION['citySlug'] . '/' . $slug . '';
                         ?>
                             <div class="items"><a href="<?= $url ?>">
-                                    <div class="imgDiv"><img data-src="<?= $item_diseases_img ?>" alt="<?= $name ?>"
-                                            class="owl-lazy"></div>
+                                    <div class="imgDiv"><img src="<?= $item_diseases_img ?>" alt="<?= $name ?>"></div>
                                     <br /><span>
                                         <?= $name ?>
                                     </span>
