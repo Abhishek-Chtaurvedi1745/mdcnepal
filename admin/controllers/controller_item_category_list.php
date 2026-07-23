@@ -15,6 +15,7 @@ class _item_category_list extends controller
 		
 	function load_data()
 	{
-	}	
+		$this->app->utility->seed_empty_category_icons();
+	}
 }	
 ?>

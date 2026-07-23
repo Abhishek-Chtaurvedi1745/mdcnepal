@@ -27,12 +27,13 @@ if ($id != '') {
 $obj_model_tble = $app->load_model("item_department");
 $rs_work = $obj_model_tble->execute("SELECT", false, "", "status='Active'", "sort_order ASC");
 $file_class = "fileupload-new";
-if ($id != '') {
+ if ($id != '') {
   if ($image != '' &&  file_exists(ABS_PATH . "/" . $app->get_user_config("item_category") . '/' . $image)) {
     $img = '../uploads/item_category/thumb' . $image;
     $file_class = "fileupload-exists";
   } else {
-    $img = 'images/img_upl.gif';
+    $img = $app->utility->get_category_icon_path($image, 'large', $slug, $name);
+    $file_class = "fileupload-new";
   }
 
   if ($image2 != '' &&  file_exists(ABS_PATH . "/" . $app->get_user_config("item_category") . '/' . $image2)) {
@@ -83,7 +84,7 @@ if ($id != '') {
           </div>
           <div class="form-row">
             <div class="form-group col-md-6">
-              <label for="inputEmail4">Icon (Size : 1000 x 1000 Px.)</label>
+              <label for="inputEmail4">Category Icon (Tests by Category) <small class="text-muted">Size: 1000 x 1000 Px.</small></label>
               <div class="fileupload <?= $file_class; ?>" data-provides="fileupload">
                 <div class="fileupload-new"> <img src="images/img_upl.gif" class="up_img"> </div>
                 <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 150px; max-height: 150px; line-height: 20px;"> <img src="<?= $img; ?>" /> </div>

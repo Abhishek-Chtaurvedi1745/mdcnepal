@@ -52,7 +52,7 @@ if($get_actionType=="item_category_list")
 	{
 			//Mobile
 			$image=$result[$i]["image"];
-			$item_category_img=$app->utility->get_image_path($image,$folder,"");
+			$item_category_img=$app->utility->get_category_icon_path($image,$folder,"",$result[$i]['slug'],$result[$i]['name']);
 			$item_department_ids=$result[$i]["item_department_ids"]!=''?$app->utility->getDepartmentData($result[$i]["item_department_ids"]):'';
 			$status='<img src="assets/img/status/'.$result[$i]['status'].'.png" onclick="javascript:change_status(\''.$result[$i]['id'].'\', \'item_category\', \''.$result[$i]['status'].'\')" border="0" id="status_'.$result[$i]['id'].'" style="cursor:pointer" alt="'.$result[$i]['status'].'" data-toggle="tooltip" data-placement="right" title="Tooltip on right" title="'.$result[$i]['status'].'" />';
 			$faq_btn='<a href="index.php?view=faq_list&faq_type=item_category&faq_type_id='.$result[$i]['id'].'" class="btn btn-xs btn-warning btn-icon mg-r-5" ><i class="far fa-comment-dots"></i></a>';

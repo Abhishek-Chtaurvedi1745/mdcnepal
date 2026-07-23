@@ -6168,6 +6168,148 @@ function getproductprice_admin_2021($product_id,$product_unit)
 			}
 			return $data;
 	}
+
+	function resolve_category_icon_key($slug = '', $name = '') {
+		$haystack = strtolower(trim($slug . ' ' . $name));
+		$map = array(
+			'health-checkup' => 'health-checkup',
+			'health-packages' => 'health-checkup',
+			'infecrion' => 'infections',
+			'infection' => 'infections',
+			'typhoid' => 'infections',
+			'tubercl' => 'infections',
+			'fever' => 'infections',
+			'viral' => 'infections',
+			'dengue' => 'infections',
+			'glomerulonephritis' => 'kidney',
+			'kidney' => 'kidney',
+			'pancreatic' => 'pancreatic',
+			'metal-toxicity' => 'metal-toxicity',
+			'toxic' => 'metal-toxicity',
+			'drug-of-abuse' => 'metal-toxicity',
+			'hormone' => 'hormone',
+			'adrenal' => 'hormone',
+			'thyroid' => 'thyroid',
+			'sarcoidosis' => 'sarcoidosis',
+			'heart' => 'heart',
+			'liver' => 'liver',
+			'hepatitis' => 'liver',
+			'diabetes' => 'diabetes',
+			'cancer' => 'cancer',
+			'allergy' => 'allergy',
+			'arthritis' => 'arthritis',
+			'rheumatoid' => 'arthritis',
+			'spondol' => 'arthritis',
+			'blood' => 'blood',
+			'anemia' => 'blood',
+			'leukemia' => 'blood',
+			'genetic' => 'genetic',
+			'parental' => 'genetic',
+			'pregnancy' => 'pregnancy',
+			'infertility' => 'pregnancy',
+			'abort' => 'pregnancy',
+			'bone' => 'bone-joints',
+			'joint' => 'bone-joints',
+			'autoimmune' => 'autoimmune',
+			'nervous' => 'nervous',
+			'norvious' => 'nervous',
+			'myasthenia' => 'nervous',
+			'osteoporosis' => 'bone-joints',
+			'thrombo' => 'blood',
+			'jse' => 'health-checkup',
+		);
+
+		foreach ($map as $keyword => $icon) {
+			if (strpos($haystack, $keyword) !== false) {
+				return $icon;
+			}
+		}
+
+		return 'default-category';
+	}
+
+	function get_category_default_icon_path($type = 'large', $slug = '', $name = '') {
+		$icon_key = $this->resolve_category_icon_key($slug, $name);
+		$file_name = $icon_key . '.svg';
+		$file_path = ABS_PATH . '/images/category-icons/' . $file_name;
+
+		if (!file_exists($file_path)) {
+			$file_name = 'default-category.svg';
+			$file_path = ABS_PATH . '/images/category-icons/' . $file_name;
+		}
+
+		$url = SERVER_ROOT . '/images/category-icons/' . $file_name;
+
+		if ($type == '') {
+			return array(
+				'large_image' => $url,
+				'medium_image' => $url,
+				'thumb_image' => $url
+			);
+		}
+
+		if ($type == 'large' || $type == 'medium' || $type == 'thumb') {
+			return $url;
+		}
+
+		return $url;
+	}
+
+	function get_category_icon_path($image_name, $type = 'large', $slug = '', $name = '') {
+		if ($image_name != '' && file_exists(ABS_PATH . '/uploads/item_category/' . $image_name)) {
+			return $this->get_image_path($image_name, 'item_category', $type);
+		}
+
+		return $this->get_category_default_icon_path($type, $slug, $name);
+	}
+
+	function seed_empty_category_icons() {
+		$obj_model = $this->app->load_model('item_category');
+		$categories = $obj_model->execute('SELECT', false, '', "status!='Trash'", 'sort_order ASC');
+		$upload_dir = ABS_PATH . '/uploads/item_category/';
+		$updated = 0;
+
+		if (!is_dir($upload_dir)) {
+			@mkdir($upload_dir, 0755, true);
+		}
+
+		for ($i = 0; $i < count($categories); $i++) {
+			$image = trim($categories[$i]['image']);
+			if ($image != '' && file_exists($upload_dir . $image) && stripos($image, 'default') === false) {
+				continue;
+			}
+
+			$icon_key = $this->resolve_category_icon_key($categories[$i]['slug'], $categories[$i]['name']);
+			$source = ABS_PATH . '/images/category-icons/' . $icon_key . '.svg';
+			if (!file_exists($source)) {
+				$source = ABS_PATH . '/images/category-icons/default-category.svg';
+			}
+
+			if (!file_exists($source)) {
+				continue;
+			}
+
+			$dest_name = 'category-' . $categories[$i]['id'] . '-' . $icon_key . '.svg';
+			if (!@copy($source, $upload_dir . $dest_name)) {
+				continue;
+			}
+
+			$update_field = array('image' => $dest_name);
+			$obj_update = $this->app->load_model('item_category');
+			$obj_update->map_fields($update_field);
+			$result = $obj_update->execute('UPDATE', false, '', "id='" . $categories[$i]['id'] . "'");
+
+			if ($result > 0) {
+				$updated++;
+			}
+		}
+
+		if ($updated > 0 && isset($_SESSION['item_category'])) {
+			unset($_SESSION['item_category']);
+		}
+
+		return $updated;
+	}
 	
 	function get_zone2021($area_name)
 	{
