@@ -154,7 +154,7 @@
 						<?php if($this->disease_read_more['has_more']){ ?>
 						<div class="disease-description-preview"><?=$this->disease_read_more['preview']?></div>
 						<div class="disease-description-full d-none"><?=$this->disease_read_more['full']?></div>
-						<button type="button" class="disease-read-more">Read More</button>
+						<a href="javascript:void(0)" class="disease-read-more">Read More</a>
 						<?php } else { ?>
 						<div><?=$this->disease_read_more['preview']?></div>
 						<?php } ?>

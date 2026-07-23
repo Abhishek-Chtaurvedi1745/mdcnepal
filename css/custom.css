@@ -327,21 +327,24 @@ a.vallbtn img {
 }
 
 .disease-read-more {
-  display: inline-block;
-  margin-top: 8px;
+  display: inline;
+  margin: 0;
   padding: 0;
   border: 0;
-  background: transparent;
-  color: #1160a4;
-  font-size: 14px;
+  background: none;
+  color: #38A7BB;
+  font-size: inherit;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: inherit;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.disease-read-more:hover {
-  color: #0d4d85;
+.disease-read-more:hover,
+.disease-read-more:focus {
+  color: #2d8a9a;
   text-decoration: underline;
+  outline: none;
 }
 
 .disease-description-wrap p:last-child {
