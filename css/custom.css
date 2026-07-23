@@ -326,16 +326,154 @@ a.vallbtn img {
   content: "...";
 }
 
+.disease-description-wrap {
+  color: var(--tx-color);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.disease-description-wrap .disease-description-content {
+  color: var(--tx-color);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.disease-description-wrap h1,
+.disease-description-wrap h2,
+.disease-description-wrap h3,
+.disease-description-wrap h4,
+.disease-description-wrap h5,
+.disease-description-wrap h6 {
+  color: #101010;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 28px 0 12px;
+}
+
+.disease-description-wrap h1 {
+  font-size: 28px;
+}
+
+.disease-description-wrap h2 {
+  font-size: 24px;
+}
+
+.disease-description-wrap h3 {
+  font-size: 20px;
+}
+
+.disease-description-wrap h4 {
+  font-size: 18px;
+}
+
+.disease-description-wrap h5,
+.disease-description-wrap h6 {
+  font-size: 16px;
+}
+
+.disease-description-wrap .disease-description-content > :first-child,
+.disease-description-wrap .disease-description-preview > :first-child,
+.disease-description-wrap .disease-description-full > :first-child {
+  margin-top: 0;
+}
+
+.disease-description-wrap p {
+  margin: 0 0 16px;
+  color: var(--tx-color);
+}
+
+.disease-description-wrap ul,
+.disease-description-wrap ol {
+  margin: 0 0 18px;
+  padding-left: 24px;
+}
+
+.disease-description-wrap li {
+  margin-bottom: 8px;
+  color: var(--tx-color);
+}
+
+.disease-description-wrap li:last-child {
+  margin-bottom: 0;
+}
+
+.disease-description-wrap ul ul,
+.disease-description-wrap ul ol,
+.disease-description-wrap ol ul,
+.disease-description-wrap ol ol {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.disease-description-wrap strong,
+.disease-description-wrap b {
+  color: #101010;
+  font-weight: 700;
+}
+
+.disease-description-wrap a:not(.disease-read-more) {
+  color: var(--main-color);
+  text-decoration: underline;
+}
+
+.disease-description-wrap a:not(.disease-read-more):hover {
+  color: #247988;
+}
+
+.disease-description-wrap blockquote {
+  margin: 16px 0;
+  padding: 12px 20px;
+  border-left: 4px solid var(--main-color);
+  background: var(--thm-light);
+  color: var(--tx-color);
+}
+
+.disease-description-wrap img {
+  max-width: 100%;
+  height: auto;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.disease-description-wrap table {
+  width: 100%;
+  margin-bottom: 18px;
+  border-collapse: collapse;
+}
+
+.disease-description-wrap table td,
+.disease-description-wrap table th {
+  padding: 8px 12px;
+  border: 1px solid #e5e5e5;
+  color: var(--tx-color);
+}
+
+.disease-description-wrap table th {
+  color: #101010;
+  font-weight: 700;
+  background: var(--thm-light);
+}
+
+.disease-description-wrap hr {
+  margin: 24px 0;
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.disease-description-wrap .disease-description-preview > :last-child {
+  margin-bottom: 0;
+}
+
 .disease-description-wrap .disease-read-more {
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 12px;
   padding: 0;
   border: 0;
   background: none;
   color: var(--main-color) !important;
-  font-size: inherit;
+  font-size: 16px;
   font-weight: 600;
-  line-height: inherit;
+  line-height: 1.5;
   cursor: pointer;
   text-decoration: none;
 }
@@ -347,8 +485,33 @@ a.vallbtn img {
   outline: none;
 }
 
-.disease-description-wrap p:last-child {
-  margin-bottom: 0;
+.why-service-sec .disease-description-wrap {
+  padding-bottom: 10px;
+}
+
+@media (max-width: 767px) {
+  .disease-description-wrap,
+  .disease-description-wrap .disease-description-content {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .disease-description-wrap h1 {
+    font-size: 24px;
+  }
+
+  .disease-description-wrap h2 {
+    font-size: 21px;
+  }
+
+  .disease-description-wrap h3 {
+    font-size: 18px;
+  }
+
+  .disease-description-wrap ul,
+  .disease-description-wrap ol {
+    padding-left: 20px;
+  }
 }
 
 .pricing-table .title {

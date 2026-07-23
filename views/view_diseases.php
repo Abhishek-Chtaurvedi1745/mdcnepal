@@ -152,11 +152,11 @@
 				<div class="common-heading text-l pl25">
 					<div class="disease-description-wrap">
 						<?php if($this->disease_read_more['has_more']){ ?>
-						<div class="disease-description-preview"><?=$this->disease_read_more['preview']?></div>
-						<div class="disease-description-full d-none"><?=$this->disease_read_more['full']?></div>
+						<div class="disease-description-content disease-description-preview"><?=$this->disease_read_more['preview']?></div>
+						<div class="disease-description-content disease-description-full d-none"><?=$this->disease_read_more['full']?></div>
 						<a href="javascript:void(0)" class="disease-read-more">Read More</a>
 						<?php } else { ?>
-						<div><?=$this->disease_read_more['preview']?></div>
+						<div class="disease-description-content"><?=$this->disease_read_more['preview']?></div>
 						<?php } ?>
 					</div>
 				</div>
