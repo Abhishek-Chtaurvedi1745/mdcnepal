@@ -1541,6 +1541,70 @@ function CustomrReferral_from($referral_from)
 		}
 	}
 
+	function resolve_disease_description($description, $disease_name, $city_name, $slug = '') {
+		$description = trim($description);
+		if ($description !== '' && trim(strip_tags($description)) !== '') {
+			return str_replace('{CITY}', $city_name, $description);
+		}
+
+		return $this->get_default_disease_description($disease_name, $city_name, $slug);
+	}
+
+	function get_default_disease_description($disease_name, $city_name, $slug = '') {
+		$slug = strtolower(trim($slug));
+		$intros = array(
+			'reproductive' => '<p>Reproductive health testing in {CITY} helps identify hormonal imbalances, fertility concerns, and conditions affecting conception. MDC Nepal offers trusted reproductive health panels for men and women with accurate and confidential reporting.</p>',
+			'heart-disease' => '<p>Heart disease remains one of the most common health concerns in Nepal. Cardiac screening and heart-related blood tests in {CITY} help detect cholesterol issues, cardiac markers, and early warning signs before complications develop.</p>',
+			'kidney-disease' => '<p>Kidney disease testing in {CITY} evaluates renal function through creatinine, urea, electrolytes, and related markers. Early kidney screening supports timely treatment and better long-term health outcomes.</p>',
+			'kidney-disorder' => '<p>Kidney disorder tests in {CITY} help monitor filtration function, electrolyte balance, and signs of chronic or acute kidney conditions. MDC Nepal provides reliable renal diagnostic services.</p>',
+			'liver-disease_4' => '<p>Liver disease screening in {CITY} assesses liver enzymes, bilirubin levels, and related markers to detect hepatitis, fatty liver, and other hepatic conditions at an early stage.</p>',
+			'liver-disorder' => '<p>Liver disorder tests in {CITY} are essential for identifying inflammation, infection, and functional abnormalities. MDC Nepal offers comprehensive liver function and related diagnostic panels.</p>',
+			'thyroid' => '<p>Thyroid disorders can affect energy, weight, mood, and metabolism. Thyroid profile tests in {CITY} measure TSH, T3, T4, and related hormones to support accurate diagnosis and treatment planning.</p>',
+			'typhoid_8' => '<p>Typhoid fever is a common bacterial infection in Nepal. Typhoid testing in {CITY} through blood culture, Widal test, or advanced serology helps confirm infection and guide appropriate medical care.</p>',
+			'allergy' => '<p>Allergies occur when the immune system reacts to substances such as pollen, dust, food, or medication. Allergy testing in {CITY} helps identify triggers and supports effective treatment and prevention strategies.</p>',
+			'cancer' => '<p>Cancer screening and tumor marker tests in {CITY} play a vital role in early detection and monitoring. MDC Nepal provides a range of oncology-related diagnostic tests with quality-controlled laboratory standards.</p>',
+			'blood-cancer' => '<p>Blood cancer tests in {CITY} include complete blood counts, peripheral smear review, and specialized hematology markers to help detect leukemia, lymphoma, and other blood-related disorders.</p>',
+			'infertility' => '<p>Infertility testing in {CITY} evaluates hormonal, reproductive, and related health factors for couples planning pregnancy. MDC Nepal offers fertility-focused diagnostic packages for men and women.</p>',
+			'diabetes' => '<p>Diabetes affects blood sugar regulation and can lead to serious complications if untreated. Diabetes tests in {CITY} include fasting glucose, HbA1c, and related panels for screening and ongoing monitoring.</p>',
+			'anemia' => '<p>Anemia testing in {CITY} measures hemoglobin, iron studies, and related blood parameters to identify deficiency, chronic disease, or other causes of low red blood cell count.</p>',
+			'anemia-leukemia' => '<p>Anemia and leukemia-related tests in {CITY} help evaluate blood cell production, hemoglobin levels, and signs of bone marrow or hematological abnormalities requiring further medical review.</p>',
+			'tuberclosis' => '<p>Tuberculosis (TB) remains a significant health concern in Nepal. TB testing in {CITY} includes sputum analysis, molecular tests, and supporting investigations for accurate diagnosis and treatment follow-up.</p>',
+			'hepatitis' => '<p>Hepatitis testing in {CITY} detects viral infections such as Hepatitis A, B, and C through antibody and antigen screening. Early detection helps prevent liver damage and transmission.</p>',
+			'aids_97' => '<p>HIV/AIDS testing in {CITY} provides confidential screening to detect HIV infection at an early stage. MDC Nepal supports safe, reliable, and discreet diagnostic services for patients.</p>',
+			'fever' => '<p>Prolonged or unexplained fever requires proper investigation. Fever profile tests in {CITY} help identify infections, inflammatory conditions, and other underlying causes through targeted blood panels.</p>',
+			'viral-infection' => '<p>Viral infection testing in {CITY} helps identify common and seasonal viruses affecting respiratory, digestive, and general health. Timely diagnosis supports faster recovery and appropriate care.</p>',
+			'arthritis' => '<p>Arthritis testing in {CITY} includes rheumatoid factor, anti-CCP, ESR, CRP, and related markers to diagnose joint inflammation and autoimmune-related arthritic conditions.</p>',
+			'rhematoid-arthritis' => '<p>Rheumatoid arthritis is an autoimmune condition affecting joints and sometimes other organs. Specialized blood tests in {CITY} help confirm diagnosis and monitor disease activity over time.</p>',
+			'ankalysing-spondolytis' => '<p>Ankylosing spondylitis affects the spine and large joints, often beginning with back pain and stiffness. Diagnostic tests in {CITY} support early identification and specialist referral when needed.</p>',
+			'autoimmune-disorder' => '<p>Autoimmune disorders occur when the immune system attacks healthy tissue. Autoimmune testing in {CITY} includes ANA, ESR, CRP, and disease-specific antibody panels for accurate evaluation.</p>',
+			'inflammatory-disease' => '<p>Inflammatory disease testing in {CITY} measures markers such as CRP and ESR to detect ongoing inflammation linked to infections, autoimmune conditions, and chronic illnesses.</p>',
+			'osteoporosis' => '<p>Osteoporosis weakens bones and increases fracture risk, especially with age. Bone health and related blood tests in {CITY} support early screening and preventive care planning.</p>',
+			'multiple-sclerosis' => '<p>Multiple sclerosis (MS) is a neurological autoimmune condition. Supporting blood tests and specialist investigations available in {CITY} assist in evaluation alongside clinical assessment.</p>',
+			'bone-amp-joints-disorder' => '<p>Bone and joint disorder tests in {CITY} evaluate calcium, vitamin D, uric acid, and inflammatory markers to support diagnosis of arthritis, gout, and musculoskeletal conditions.</p>',
+			'screening-for-all-diesase' => '<p>Comprehensive health screening in {CITY} helps detect common diseases before symptoms appear. MDC Nepal offers full-body and condition-based checkup packages for preventive healthcare.</p>',
+			'health-checkup' => '<p>Regular health checkups in {CITY} are essential for preventive care and early disease detection. MDC Nepal provides customized health screening packages for individuals and families.</p>',
+		);
+
+		if (isset($intros[$slug])) {
+			$intro = $intros[$slug];
+		} else {
+			$intro = '<p>Looking for reliable {DISEASE} tests and health checkup packages in {CITY}? Modern Diagnostic Center (MDC) Nepal provides accurate, affordable, and timely {DISEASE} diagnostic services with expert medical support.</p>';
+		}
+
+		$body = '
+<h3>Why is {DISEASE} Testing Important in {CITY}?</h3>
+<p>Early and accurate {DISEASE} testing helps doctors diagnose conditions sooner, monitor treatment progress, and prevent complications. At MDC Nepal in {CITY}, patients receive quality laboratory services with modern equipment and professionally validated reports.</p>
+<h3>Who Should Consider {DISEASE} Tests?</h3>
+<p>{DISEASE} tests are recommended for individuals with related symptoms, family history, chronic conditions, or those advised by a doctor. Preventive screening is also useful for people who want to stay informed about their health status.</p>
+<h3>Book {DISEASE} Tests at MDC Nepal</h3>
+<p>Explore available {DISEASE} tests and packages in {CITY}, compare options, and book online with ease. MDC Nepal also offers home sample collection and multiple collection centers for your convenience.</p>';
+
+		$html = $intro . $body;
+		$html = str_replace(array('{DISEASE}', '{CITY}'), array($disease_name, $city_name), $html);
+
+		return $html;
+	}
+
 	function prepare_read_more_content($html, $word_limit = 50) {
 		$html = trim($html);
 		$result = array(

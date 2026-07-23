@@ -56,7 +56,12 @@ class _diseases extends controller {
 			}
 
 			$this->app->assign("rs_diseases",$rs_diseases);
-			$disease_description = str_replace("{CITY}", $_SESSION['cityName'], $rs_diseases[0]['description']);
+			$disease_description = $this->app->utility->resolve_disease_description(
+				$rs_diseases[0]['description'],
+				$rs_diseases[0]['name'],
+				$_SESSION['cityName'],
+				$rs_diseases[0]['slug']
+			);
 			$this->app->assign("disease_read_more", $this->app->utility->prepare_read_more_content($disease_description, 50));
 			$this->app->assign("diseasesInfo",str_replace("{CITY}", $_SESSION['cityName'],$rs_diseases[0]));
 

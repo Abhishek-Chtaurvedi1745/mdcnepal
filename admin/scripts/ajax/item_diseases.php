@@ -248,7 +248,12 @@ if($actionType=="item_diseasesAddEdit")
 
 	$id=$app->getPostVar('id');
 	$description=$app->getPostVar('description');
-	
+	$sort_order=$app->getPostVar('sort_order');
+	$set_at_home=$app->getPostVar('set_at_home');
+	$meta_title=$app->getPostVar('meta_title');
+	$meta_keywords=$app->getPostVar('meta_keywords');
+	$meta_description=$app->getPostVar('meta_description');
+	$meta_schema=$app->getPostVar('meta_schema');
 
 	$itemdepartments=$app->getPostVar('work_item');
 
@@ -351,15 +356,16 @@ if($actionType=="item_diseasesAddEdit")
 		
 
 		$update_field['slug'] = $slug;
-
+		$update_field['name'] = $name;
 		$update_field['item_department_ids'] = $item_department_ids;
-
-		
-
 		$update_field['description'] = $description;
-
+		$update_field['sort_order'] = $sort_order;
+		$update_field['set_at_home'] = $set_at_home;
+		$update_field['meta_title'] = $meta_title;
+		$update_field['meta_keywords'] = $meta_keywords;
+		$update_field['meta_description'] = $meta_description;
+		$update_field['meta_schema'] = $meta_schema;
 		$update_field['status'] = $status;
-
 		$update_field['entry_date_time'] = date('d-m-Y H:i:s');
 
 		
@@ -389,6 +395,11 @@ if($actionType=="item_diseasesAddEdit")
 		if($rs>0)
 
 		{
+
+			if(isset($_SESSION['item_diseases']))
+			{
+				unset($_SESSION['item_diseases']);
+			}
 
 			$msg="Record ".$update_title." Successfully.";
 
