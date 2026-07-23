@@ -243,7 +243,7 @@
     </div>
 </section>
 
-<section class="pb60 pt40 testsbyCondition bg-bluegradient">
+<section class="pb60 pt40 testsbyCondition bg-bluegradient condition-tests-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -254,19 +254,19 @@
         </div>
         <div class="row">
             <div class="col-lg-12 text-center">
-				<div class="logo-weworkfor owl-carousel">
+				<div class="logo-weworkfor condition-tests-slider owl-carousel">
                 <?php for($i=0;$i<count($this->all_diseases);$i++){
 					  $name=$this->all_diseases[$i]['name'];
 					  $image=$this->all_diseases[$i]['image'];
 					  $slug=$this->all_diseases[$i]['slug'];
 					  $folder='item_diseases';
-					  $item_diseases_img=$this->utility->get_image_path($image,$folder,"large");
+					  $item_diseases_img=$this->utility->get_disease_icon_path($image,$folder,"large",$slug,$name);
 					  $url=SERVER_ROOT.'/diseases/'.$_SESSION['citySlug'].'/'.$slug.'';
 					  ?>
-				  <div class="items"><a href="<?=$url?>"><div class="imgDiv"><img src="<?=$item_diseases_img?>" alt="<?=$name?>" class=""></div><br/><span class="text-white"><?=$name?></span></a></div>
+				  <div class="items"><a href="<?=$url?>"><div class="imgDiv"><img src="<?=$item_diseases_img?>" alt="<?=$name?>"></div><span class="condition-item-label text-white"><?=$name?></span></a></div>
                   <?php }?>
 				</div>
-			</div>
+            </div>
         </div>
     </div>
 </section>

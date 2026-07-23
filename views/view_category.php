@@ -190,7 +190,7 @@
 </section>
 <!--End Faqs-->
 
-<section class="pb60 pt40 testsbyCondition">
+<section class="pb60 pt40 testsbyCondition category-tests-section">
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
@@ -201,7 +201,7 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-12 imgs text-center">
-				<div class="logo-weworkfor owl-carousel">
+				<div class="logo-weworkfor category-tests-slider owl-carousel">
 					<?php for($i=0;$i<count($this->rs_category);$i++){
 										$name=$this->rs_category[$i]['name'];
 										$image=$this->rs_category[$i]['image'];
@@ -210,7 +210,7 @@
 										$item_diseases_img=$this->utility->get_category_icon_path($image,$folder,"large",$slug,$name);
 										$url=SERVER_ROOT.'/category/'.$_SESSION['citySlug'].'/'.$slug.'';
 					?>
-					<div class="items"><a href="<?=$url?>"><div class="imgDiv"><img src="<?=$item_diseases_img?>" alt="<?=$name?>" class=""></div><br/><span ><?=$name?></span></a></div>
+					<div class="items"><a href="<?=$url?>"><div class="imgDiv"><img src="<?=$item_diseases_img?>" alt="<?=$name?>"></div><span class="category-item-label"><?=$name?></span></a></div>
 					<?php }?>
 				</div>
 			</div>

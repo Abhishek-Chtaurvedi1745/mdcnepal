@@ -730,7 +730,7 @@
     },
   });
   //Owl-Carousel - app page bages-slider
-  var owl = $(".logo-weworkfor");
+  var owl = $(".logo-weworkfor").not(".category-tests-slider");
   owl.owlCarousel({
     items: 4,
     loop: true,
@@ -764,6 +764,38 @@
       },
       1600: {
         items: 8,
+      },
+    },
+  });
+
+  var categorySlider = $(".category-tests-slider");
+  categorySlider.owlCarousel({
+    items: 6,
+    loop: false,
+    autoplay: false,
+    margin: 18,
+    nav: true,
+    navText: [
+      '<i class="fas fa-angle-left"></i>',
+      '<i class="fas fa-angle-right"></i>',
+    ],
+    dots: false,
+    smartSpeed: 600,
+    responsive: {
+      0: {
+        items: 2,
+      },
+      520: {
+        items: 3,
+      },
+      768: {
+        items: 4,
+      },
+      992: {
+        items: 5,
+      },
+      1200: {
+        items: 6,
       },
     },
   });

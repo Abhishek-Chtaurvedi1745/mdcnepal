@@ -16,6 +16,7 @@ class _item_diseases_list extends controller
 	function load_data()
 	{
 		$this->app->utility->seed_empty_disease_descriptions();
+		$this->app->utility->seed_empty_disease_icons();
 	}	
 }	
 ?>

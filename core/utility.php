@@ -6215,6 +6215,11 @@ function getproductprice_admin_2021($product_id,$product_unit)
 			'norvious' => 'nervous',
 			'myasthenia' => 'nervous',
 			'osteoporosis' => 'bone-joints',
+			'cardiac' => 'heart',
+			'celiac' => 'autoimmune',
+			'meningitis' => 'nervous',
+			'congenital' => 'genetic',
+			'enzyme' => 'genetic',
 			'thrombo' => 'blood',
 			'jse' => 'health-checkup',
 		);
@@ -6306,6 +6311,62 @@ function getproductprice_admin_2021($product_id,$product_unit)
 
 		if ($updated > 0 && isset($_SESSION['item_category'])) {
 			unset($_SESSION['item_category']);
+		}
+
+		return $updated;
+	}
+
+	function get_disease_icon_path($image_name, $type = 'large', $slug = '', $name = '') {
+		if ($image_name != '' && file_exists(ABS_PATH . '/uploads/item_diseases/' . $image_name)) {
+			return $this->get_image_path($image_name, 'item_diseases', $type);
+		}
+
+		return $this->get_category_default_icon_path($type, $slug, $name);
+	}
+
+	function seed_empty_disease_icons() {
+		$obj_model = $this->app->load_model('item_diseases');
+		$diseases = $obj_model->execute('SELECT', false, '', "status!='Trash'", 'sort_order ASC');
+		$upload_dir = ABS_PATH . '/uploads/item_diseases/';
+		$updated = 0;
+
+		if (!is_dir($upload_dir)) {
+			@mkdir($upload_dir, 0755, true);
+		}
+
+		for ($i = 0; $i < count($diseases); $i++) {
+			$image = trim($diseases[$i]['image']);
+			if ($image != '' && file_exists($upload_dir . $image) && stripos($image, 'default') === false) {
+				continue;
+			}
+
+			$icon_key = $this->resolve_category_icon_key($diseases[$i]['slug'], $diseases[$i]['name']);
+			$source = ABS_PATH . '/images/category-icons/' . $icon_key . '.svg';
+			if (!file_exists($source)) {
+				$source = ABS_PATH . '/images/category-icons/default-category.svg';
+			}
+
+			if (!file_exists($source)) {
+				continue;
+			}
+
+			$dest_name = 'disease-' . $diseases[$i]['id'] . '-' . $icon_key . '.svg';
+			if (!@copy($source, $upload_dir . $dest_name)) {
+				continue;
+			}
+
+			$update_field = array('image' => $dest_name);
+			$obj_update = $this->app->load_model('item_diseases');
+			$obj_update->map_fields($update_field);
+			$result = $obj_update->execute('UPDATE', false, '', "id='" . $diseases[$i]['id'] . "'");
+
+			if ($result > 0) {
+				$updated++;
+			}
+		}
+
+		if ($updated > 0 && isset($_SESSION['item_diseases'])) {
+			unset($_SESSION['item_diseases']);
 		}
 
 		return $updated;

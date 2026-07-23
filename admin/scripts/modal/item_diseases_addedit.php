@@ -95,7 +95,7 @@ if($id!='')
 
 	 {
 
-		 $img='images/img_upl.gif';
+		 $img=$app->utility->get_disease_icon_path($image, 'large', $slug, $name);
 
 	 }
 
@@ -205,7 +205,7 @@ if($id!='')
 
       <div class="form-group col-md-6">
 
-        <label for="inputEmail4">Image (Size : 1000 x 1000 Px.)</label>
+        <label for="inputEmail4">Condition Icon (Tests by Condition) <small class="text-muted">Size: 1000 x 1000 Px.</small></label>
 
         <div class="fileupload <?=$file_class;?>" data-provides="fileupload">
 
