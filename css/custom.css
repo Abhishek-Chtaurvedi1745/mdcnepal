@@ -326,6 +326,28 @@ a.vallbtn img {
   content: "...";
 }
 
+.disease-read-more {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1160a4;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.disease-read-more:hover {
+  color: #0d4d85;
+  text-decoration: underline;
+}
+
+.disease-description-wrap p:last-child {
+  margin-bottom: 0;
+}
+
 .pricing-table .title {
   margin: 0;
   font-size: 19px;

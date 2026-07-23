@@ -143,14 +143,22 @@
 		</div>
 	</div>
 </section>
-<?php if($this->diseasesInfo['description']!=''){?>
+<?php if($this->disease_read_more['preview']!=''){?>
 <section class="service why-service-sec  pad-tb pt40">
 	<div class="container">
 		<div class="row">
 			
 			<div class="col-lg-12 block-1">
 				<div class="common-heading text-l pl25">
-					<div><?=$this->diseasesInfo['description']?></div>
+					<div class="disease-description-wrap">
+						<?php if($this->disease_read_more['has_more']){ ?>
+						<div class="disease-description-preview"><?=$this->disease_read_more['preview']?></div>
+						<div class="disease-description-full d-none"><?=$this->disease_read_more['full']?></div>
+						<button type="button" class="disease-read-more">Read More</button>
+						<?php } else { ?>
+						<div><?=$this->disease_read_more['preview']?></div>
+						<?php } ?>
+					</div>
 				</div>
 				
 			</div>
@@ -326,4 +334,12 @@
 <!--common script file-->
 <script src="js/main.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js'></script>
+<script>
+$(document).on('click', '.disease-read-more', function() {
+	var $wrap = $(this).closest('.disease-description-wrap');
+	$wrap.find('.disease-description-preview').addClass('d-none');
+	$wrap.find('.disease-description-full').removeClass('d-none');
+	$(this).hide();
+});
+</script>
 <?php include 'includes/general_data.php';?>

@@ -1540,6 +1540,58 @@ function CustomrReferral_from($referral_from)
 			return $string;
 		}
 	}
+
+	function prepare_read_more_content($html, $word_limit = 50) {
+		$html = trim($html);
+		$result = array(
+			'has_more' => false,
+			'preview' => '',
+			'full' => ''
+		);
+
+		if ($html === '') {
+			return $result;
+		}
+
+		$plain = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
+		if ($plain === '') {
+			return $result;
+		}
+
+		$result['full'] = $html;
+		$word_count = str_word_count($plain);
+
+		if ($word_count <= $word_limit) {
+			$result['preview'] = $html;
+			return $result;
+		}
+
+		$result['has_more'] = true;
+
+		if (preg_match('/^(\s*<p[^>]*>.*?<\/p>)([\s\S]*)$/is', $html, $matches)) {
+			$first_paragraph = $matches[1];
+			$remaining_content = trim($matches[2]);
+
+			if ($remaining_content !== '') {
+				$result['preview'] = $first_paragraph;
+				return $result;
+			}
+
+			$first_paragraph_plain = trim(strip_tags($first_paragraph));
+			$first_paragraph_words = preg_split('/\s+/', $first_paragraph_plain);
+			if (count($first_paragraph_words) > $word_limit) {
+				$truncated = implode(' ', array_slice($first_paragraph_words, 0, $word_limit));
+				$result['preview'] = '<p>' . htmlspecialchars($truncated, ENT_QUOTES, 'UTF-8') . '...</p>';
+				return $result;
+			}
+		}
+
+		$words = preg_split('/\s+/', $plain);
+		$truncated = implode(' ', array_slice($words, 0, $word_limit));
+		$result['preview'] = '<p>' . htmlspecialchars($truncated, ENT_QUOTES, 'UTF-8') . '...</p>';
+
+		return $result;
+	}
 	
 	function xTimeAgo ($oldTime, $newTime, $timeType) {
         $timeCalc = strtotime($newTime) - strtotime($oldTime);

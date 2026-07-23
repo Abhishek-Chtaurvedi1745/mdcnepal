@@ -56,6 +56,8 @@ class _diseases extends controller {
 			}
 
 			$this->app->assign("rs_diseases",$rs_diseases);
+			$disease_description = str_replace("{CITY}", $_SESSION['cityName'], $rs_diseases[0]['description']);
+			$this->app->assign("disease_read_more", $this->app->utility->prepare_read_more_content($disease_description, 50));
 			$this->app->assign("diseasesInfo",str_replace("{CITY}", $_SESSION['cityName'],$rs_diseases[0]));
 
 			$obj_model_item_diseases_banner=$this->app->load_model('item_diseases_banner');
