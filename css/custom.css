@@ -326,13 +326,13 @@ a.vallbtn img {
   content: "...";
 }
 
-.disease-read-more {
-  display: inline;
-  margin: 0;
+.disease-description-wrap .disease-read-more {
+  display: inline-block;
+  margin-top: 8px;
   padding: 0;
   border: 0;
   background: none;
-  color: #38A7BB;
+  color: var(--main-color) !important;
   font-size: inherit;
   font-weight: 600;
   line-height: inherit;
@@ -340,9 +340,9 @@ a.vallbtn img {
   text-decoration: none;
 }
 
-.disease-read-more:hover,
-.disease-read-more:focus {
-  color: #2d8a9a;
+.disease-description-wrap .disease-read-more:hover,
+.disease-description-wrap .disease-read-more:focus {
+  color: #247988 !important;
   text-decoration: underline;
   outline: none;
 }

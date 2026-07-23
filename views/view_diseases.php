@@ -335,11 +335,23 @@
 <script src="js/main.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js'></script>
 <script>
-$(document).on('click', '.disease-read-more', function() {
-	var $wrap = $(this).closest('.disease-description-wrap');
-	$wrap.find('.disease-description-preview').addClass('d-none');
-	$wrap.find('.disease-description-full').removeClass('d-none');
-	$(this).hide();
+$(document).on('click', '.disease-read-more', function(e) {
+	e.preventDefault();
+	var $link = $(this);
+	var $wrap = $link.closest('.disease-description-wrap');
+	var isExpanded = $wrap.hasClass('is-expanded');
+
+	if (isExpanded) {
+		$wrap.removeClass('is-expanded');
+		$wrap.find('.disease-description-preview').removeClass('d-none');
+		$wrap.find('.disease-description-full').addClass('d-none');
+		$link.text('Read More');
+	} else {
+		$wrap.addClass('is-expanded');
+		$wrap.find('.disease-description-preview').addClass('d-none');
+		$wrap.find('.disease-description-full').removeClass('d-none');
+		$link.text('Read Less');
+	}
 });
 </script>
 <?php include 'includes/general_data.php';?>
