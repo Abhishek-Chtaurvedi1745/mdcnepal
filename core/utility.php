@@ -1605,6 +1605,45 @@ function CustomrReferral_from($referral_from)
 		return $html;
 	}
 
+	function seed_empty_disease_descriptions() {
+		$obj_model = $this->app->load_model("item_diseases");
+		$diseases = $obj_model->execute("SELECT", false, "", "status!='Trash'", "sort_order ASC");
+
+		$updated = 0;
+
+		for ($i = 0; $i < count($diseases); $i++) {
+			$plain = trim(strip_tags(trim($diseases[$i]['description'])));
+
+			if ($plain !== '') {
+				continue;
+			}
+
+			$default_description = $this->get_default_disease_description(
+				$diseases[$i]['name'],
+				'{CITY}',
+				$diseases[$i]['slug']
+			);
+
+			$update_field = array(
+				'description' => $default_description
+			);
+
+			$obj_update = $this->app->load_model("item_diseases");
+			$obj_update->map_fields($update_field);
+			$result = $obj_update->execute("UPDATE", false, "", "id='" . $diseases[$i]['id'] . "'");
+
+			if ($result > 0) {
+				$updated++;
+			}
+		}
+
+		if ($updated > 0 && isset($_SESSION['item_diseases'])) {
+			unset($_SESSION['item_diseases']);
+		}
+
+		return $updated;
+	}
+
 	function prepare_read_more_content($html, $word_limit = 50) {
 		$html = trim($html);
 		$result = array(

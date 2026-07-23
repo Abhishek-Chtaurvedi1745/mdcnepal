@@ -19,12 +19,16 @@ if($id!='')
   
   $description=$result[0]['description'];
 	$name=$result[0]['name'];
+	$slug=$result[0]['slug'];
+
+	if(trim(strip_tags(trim($description)))=='')
+	{
+		$description=$app->utility->get_default_disease_description($name, '{CITY}', $slug);
+	}
 
 	$sort_order=$result[0]['sort_order'];
 
 	$status=$result[0]['status'];
-
-	$slug=$result[0]['slug'];
 
 	$item_department_ids=$result[0]['item_department_ids'];
 	$set_at_home=$result[0]['set_at_home'];
