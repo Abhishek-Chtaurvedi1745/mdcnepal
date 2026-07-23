@@ -937,6 +937,79 @@ a.vallbtn img {
   right: -8px;
 }
 
+.condition-tests-section .items {
+  text-align: center;
+  padding: 0 6px;
+}
+
+.condition-tests-section .items a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 190px;
+  text-decoration: none;
+}
+
+.condition-tests-section .condition-item-label {
+  display: block;
+  width: 100%;
+  max-width: 132px;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.condition-tests-section .imgDiv {
+  width: 112px;
+  height: 112px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.condition-tests-section .imgDiv:before,
+.condition-tests-section .imgDiv:after {
+  display: none;
+}
+
+.condition-tests-section .imgDiv img {
+  width: 58px !important;
+  height: 58px !important;
+  max-width: 58px;
+  max-height: 58px;
+  padding: 0;
+  object-fit: contain;
+}
+
+.condition-tests-section .owl-carousel .owl-item img {
+  width: auto !important;
+}
+
+.condition-tests-section .owl-theme .owl-nav [class*="owl-"] {
+  color: #fff;
+  font-size: 34px;
+}
+
+.condition-tests-section .owl-theme .owl-nav button.owl-prev {
+  left: -8px;
+}
+
+.condition-tests-section .owl-theme .owl-nav button.owl-next {
+  right: -8px;
+}
+
 .how-works-block {
   margin: 0 auto;
   display: inline-block;
@@ -6762,6 +6835,23 @@ p {
   }
 
   .category-tests-section .imgDiv img {
+    width: 50px !important;
+    height: 50px !important;
+    max-width: 50px;
+    max-height: 50px;
+  }
+
+  .condition-tests-section .condition-item-label {
+    font-size: 12px;
+    max-width: 110px;
+  }
+
+  .condition-tests-section .imgDiv {
+    width: 96px;
+    height: 96px;
+  }
+
+  .condition-tests-section .imgDiv img {
     width: 50px !important;
     height: 50px !important;
     max-width: 50px;
