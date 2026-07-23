@@ -161,7 +161,7 @@
 </section>
 <!-- End Service Box  -->
 <?php if (count($this->rs_item_diseases) > 0) { ?>
-    <section class="pb60 pt40 testsbyCondition-new condition-tests-section">
+    <section class="pb60 pt40  testsbyCondition-new">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -172,19 +172,21 @@
             </div>
             <div class="row position-relative">
                 <div class="col-lg-12 text-center">
-                    <div class="logo-weworkfor1 condition-tests-slider owl-carousel common-slider">
+                    <div class="logo-weworkfor1 owl-carousel common-slider">
                         <?php for ($i = 0; $i < count($this->rs_item_diseases); $i++) {
                             $name = $this->rs_item_diseases[$i]['name'];
                             $image = $this->rs_item_diseases[$i]['image'];
                             $slug = $this->rs_item_diseases[$i]['slug'];
                             $folder = 'item_diseases';
-                            $item_diseases_img = $this->utility->get_disease_icon_path($image, $folder, "large", $slug, $name);
+                            $item_diseases_img = $this->utility->get_image_path($image, $folder, "large");
                             $url = SERVER_ROOT . '/diseases/' . $_SESSION['citySlug'] . '/' . $slug . '';
                         ?>
                             <div class="items"><a href="<?= $url ?>">
                                     <div class="imgDiv"><img data-src="<?= $item_diseases_img ?>" alt="<?= $name ?>"
                                             class="owl-lazy"></div>
-                                    <span class="condition-item-label text-white"><?= $name ?></span>
+                                    <br /><span>
+                                        <?= $name ?>
+                                    </span>
                                 </a></div>
                         <?php } ?>
                     </div>

@@ -730,7 +730,7 @@
     },
   });
   //Owl-Carousel - app page bages-slider
-  var owl = $(".logo-weworkfor").not(".category-tests-slider").not(".condition-tests-slider");
+  var owl = $(".logo-weworkfor").not(".category-tests-slider");
   owl.owlCarousel({
     items: 4,
     loop: true,
@@ -768,7 +768,7 @@
     },
   });
 
-  var categorySlider = $(".category-tests-slider, .condition-tests-slider");
+  var categorySlider = $(".category-tests-slider");
   categorySlider.owlCarousel({
     items: 6,
     loop: false,
@@ -800,7 +800,7 @@
     },
   });
   //Owl-Carousel - app page bages-slider
-  var owl = $(".logo-weworkfor1").not(".condition-tests-slider");
+  var owl = $(".logo-weworkfor1");
   owl.owlCarousel({
     items: 4,
     loop: true,
