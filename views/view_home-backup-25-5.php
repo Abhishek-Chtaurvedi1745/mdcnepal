@@ -70,7 +70,7 @@
 							<span class="mt0 mb0 tt">
                             <?php for($i=0;$i<count($this->rs_item_banner_category);$i++){
 								 $folder='item_category';
-					 			 $item_cat_img=$this->utility->get_category_icon_path($this->rs_item_banner_category[$i]['image'],'large',$this->rs_item_banner_category[$i]['slug'],$this->rs_item_banner_category[$i]['name']);
+					 			 $item_cat_img=$this->utility->get_category_icon_path($this->rs_item_banner_category[$i]['image'],$folder,"large",$this->rs_item_banner_category[$i]['slug'],$this->rs_item_banner_category[$i]['name']);
 								?>
                             <a class="tooltip-with-img radiologyCatClick"  data-name="<?=$this->rs_item_banner_category[$i]['name']?>" data-id="<?=$this->rs_item_banner_category[$i]['id']?>" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" title="<h4><img src='<?=$item_cat_img?>' width='180'> </h4>"><?=$this->rs_item_banner_category[$i]['name']?></a> <?php if($i<count($this->rs_item_banner_category)-1){?>| <?php }?>
                             <?php }?>

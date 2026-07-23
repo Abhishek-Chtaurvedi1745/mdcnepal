@@ -318,7 +318,7 @@
 										$image=$this->rs_category[$i]['image'];
 										$slug=$this->rs_category[$i]['slug'];
 										$folder='item_category';
-										$item_diseases_img=$this->utility->get_category_icon_path($image,'large',$slug,$name);
+										$item_diseases_img=$this->utility->get_category_icon_path($image,$folder,"large",$slug,$name);
 										$url=SERVER_ROOT.'/category/'.$_SESSION['citySlug'].'/'.$slug.'';
 					?>
 					<div class="items"><a href="<?=$url?>"><div class="imgDiv"><img src="<?=$item_diseases_img?>" alt="<?=$name?>" class=""></div><br/><span ><?=$name?></span></a></div>

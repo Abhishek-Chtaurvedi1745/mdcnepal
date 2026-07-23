@@ -38,7 +38,7 @@
 						if ($j > 30) {
 							break;
 						}											
-				$image = $this->utility->get_category_icon_path($item['image'], 'large', $item['slug'], $item['name']);
+				$image = $this->utility->get_category_icon_path($item['image'], 'item_category', 'large', $item['slug'], $item['name']);
 			?>
 			<div class="col-lg-3 col-md-4 col-6  mt30 shape-loc  wow fadeIn" data-wow-delay=".2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeIn;">
 				<div class="s-block" data-tilt="" data-tilt-max="5" data-tilt-speed="1000" style="will-change: transform; transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);">

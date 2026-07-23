@@ -20,27 +20,32 @@ if ($id != '') {
   $show_in_banner = $result[0]['show_in_banner'];
   //image
   $image = $result[0]["image"];
-  $image2 = $result[0]["banner_image"];
+  $image2 = $result[0]["image"];
 } else {
   //Add item_category
 }
 $obj_model_tble = $app->load_model("item_department");
 $rs_work = $obj_model_tble->execute("SELECT", false, "", "status='Active'", "sort_order ASC");
 $file_class = "fileupload-new";
-$file_class2 = "fileupload-new";
  if ($id != '') {
-  $img = $app->utility->get_admin_upload_preview($image, 'item_category', $slug, $name, 'category');
-  if ($image != '' && file_exists(ABS_PATH . "/" . $app->get_user_config("item_category") . '/' . $image)) {
+  if ($image != '' &&  file_exists(ABS_PATH . "/" . $app->get_user_config("item_category") . '/' . $image)) {
+    $img = '../uploads/item_category/thumb' . $image;
     $file_class = "fileupload-exists";
+  } else {
+    $img = $app->utility->get_category_icon_path($image, 'large', $slug, $name);
+    $file_class = "fileupload-new";
   }
 
-  $img2 = $app->utility->get_admin_upload_preview($image2, 'item_category', $slug, $name, 'category');
-  if ($image2 != '' && file_exists(ABS_PATH . "/" . $app->get_user_config("item_category") . '/' . $image2)) {
+  if ($image2 != '' &&  file_exists(ABS_PATH . "/" . $app->get_user_config("item_category") . '/' . $image2)) {
+    $img2 = '../uploads/item_category/thumb' . $image2;
     $file_class2 = "fileupload-exists";
+  } else {
+    $img2 = 'images/img_upl.gif';
   }
 } else {
   $img = 'images/img_upl.gif';
-  $img2 = 'images/img_upl.gif';
+
+  
 }
 ?>
 <div class="modal fade" id="modal_item_category_addedit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel4" aria-hidden="true">
