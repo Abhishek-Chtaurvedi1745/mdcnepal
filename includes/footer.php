@@ -34,7 +34,7 @@
 
 			<?php if (count($item_category) > 0) { ?>
 				<div class="col-lg-12 col-sm-12  pb50 pt50 bg-light-secondary text-center">
-					<h6 class="fw-semibold mb20">Popular Categories</h6>
+					<h6 class="fw-semibold mb20">Popular Categories hahjashashjhj</h6>
 					<?php
 					$j = 0;
 					foreach ($item_category as $item) {
