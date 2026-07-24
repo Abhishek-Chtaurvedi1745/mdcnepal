@@ -1,72 +1,35 @@
-name: Deploy via SSH rsync
+name: Deploy to cPanel
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
-
-concurrency:
-  group: ssh-deploy-production
-  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-
-          ssh-keygen -lf ~/.ssh/deploy_key
-
-      - name: Add Server to known_hosts
-        run: |
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-      - name: Test SSH Connection
-        run: |
-          ssh \
-            -i ~/.ssh/deploy_key \
-            -p ${{ secrets.SSH_PORT }} \
-            -o IdentitiesOnly=yes \
-            -o PreferredAuthentications=publickey \
-            -o PasswordAuthentication=no \
-            -o StrictHostKeyChecking=yes \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "echo 'SSH Connection Successful'; whoami; pwd"
-
-      - name: Deploy Website
-        env:
-          RSYNC_RSH: ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o StrictHostKeyChecking=yes
-        run: |
-          rsync -azv \
-            --exclude ".git" \
-            --exclude ".github" \
-            --exclude "logs" \
-            --exclude "cache" \
-            --exclude ".ftpquota" \
-            --exclude ".gitignore" \
-            --exclude "*.sql" \
-            --exclude "*.sql.gz" \
-            --exclude "uploads" \
-            --exclude ".env" \
-            --exclude "config.php" \
-            --exclude "core/config.php" \
-            ./ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}
-
-      - name: Deployment Complete
-        run: echo "Deployment completed successfully."
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            mdc-frontend/**
+            mdc-admin/**
+            mdc-backend/**
+            logs/**
+            temp/**
+            cache/**
+            hdrs.txt
+            body.txt
+            **/*.md
