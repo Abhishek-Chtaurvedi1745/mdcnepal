@@ -13,7 +13,7 @@ core/config.php
 # ==========================
 # User content & runtime files
 # ==========================
-uploads/
+# uploads/
 logs/
 cache/
 *.log
