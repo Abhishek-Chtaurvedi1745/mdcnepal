@@ -331,25 +331,32 @@ class global_include
 				$new_url=str_replace("http://","",$new_url);
 				$new_url=str_replace("www.","",$new_url);
 				$new_url=str_replace("WWW.","",$new_url);
-				$is_local_host = in_array($_SERVER['HTTP_HOST'], array('localhost', '127.0.0.1', '::1'));
-				if(!$is_local_host){
-					if($page_name=='index.html' || $page_name=='index.php' || $page_name=='index.php/')
-					{
-						$this->app->redirect("https://www.".$new_url);
-					}
-					if (strpos($url, "http://")!==false)
-					{
-						$this->app->redirect("https://www.".$new_url);
-					}
-					if (strpos($url, "www")!==false)
-					{
-					}
-					else
-					{
-						$this->app->redirect("https://www.".$new_url);
-					}
-				}
-
+				// $is_local_host = in_array($_SERVER['HTTP_HOST'], array('localhost', '127.0.0.1', '::1'));
+				// if(!$is_local_host){
+				// 	if($page_name=='index.html' || $page_name=='index.php' || $page_name=='index.php/')
+				// 	{
+				// 		$this->app->redirect("https://www.".$new_url);
+				// 	}
+				// 	if (strpos($url, "http://")!==false)
+				// 	{
+				// 		$this->app->redirect("https://www.".$new_url);
+				// 	}
+				// 	if (strpos($url, "www")!==false)
+				// 	{
+				// 	}
+				// 	else
+				// 	{
+				// 		$this->app->redirect("https://www.".$new_url);
+				// 	}
+				// }
+$is_local_host = in_array($_SERVER['HTTP_HOST'], array('localhost', '127.0.0.1', '::1'));
+if(!$is_local_host){
+	// Keep current host (crm.razobyte.com) — do NOT force www
+	if (strpos($url, "http://")!==false)
+	{
+		$this->app->redirect("https://".$new_url);
+	}
+}
 				if(empty($_SESSION['MDRCCustID']))
 				{
 					if(isset($_COOKIE["MDCUuid"])) 
