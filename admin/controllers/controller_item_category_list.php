@@ -1,0 +1,21 @@
+<?php
+class _item_category_list extends controller
+{
+	function init()
+	{
+		if($this->app->getCurrentAction()=="")
+		{
+			$this->load_data();
+		}
+	}
+
+	function onload()
+	{
+	}	
+		
+	function load_data()
+	{
+		$this->app->utility->seed_empty_category_icons();
+	}
+}	
+?>

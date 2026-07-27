@@ -1,0 +1,92 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"/>
+    <title>Your Business Title</title>
+    <script defer="defer" src="https://minio.finpos.global/getpay-cdn/webcheckout/live/v2/bundle.js"></script>
+
+</head>
+
+<body>
+
+<div id="checkout" hidden></div>
+<button id="checkout-btn">Checkout</button>
+
+<script>
+    const options = {
+        userInfo: {
+            name: "John Doe",
+            email: "john@gmail.com",
+            state: "Bagmati",
+            country: "Nepal",
+            zipcode: "44600",
+            city: "Kathmandu",
+            address: "Chabahil",
+        },
+        clientRequestId: "CLIENT123",
+        papInfo:"eyJpbnN0aXR1dGlvbklkIjoic2lkenEzZngiLCJtaWQiOiIxMDA1NTAxNDc5MjEyMjQiLCJ0aWQiOiIxNDc5MjAwMSJ9",
+        oprKey: "4fa4c6b9-3f91-43e5-9b4f-319f68187ba5",
+        insKey: "",
+        websiteDomain: window.location.origin,
+        price: parseFloat(1),
+        businessName: "OneStop Shopping - Rediscover a great shopping tradition",
+        imageUrl: "https://store.com/image.png",
+        currency: "NPR",
+        prefill: {
+            name: true,
+            email: true,
+            state: true,
+            city: true,
+            address: true,
+            zipcode: true,
+            country: true
+        },
+        disableFields: {
+            address: true,
+            state: true,
+        },
+        callbackUrl: {
+            successUrl:'https://www.mdcnepal.com/success.html',
+            failUrl: 'https://www.mdcnepal.com/fail.html',
+        },
+        themeColor: "#5662FF",
+        orderInformationUI: `<div style="font-family:Arial;"><h3>Order Information</h3><div class="item" style="margin-bottom: 20px;">
+        <div class="item">
+        <img style="max-width: 50px; margin-right: 10px;" src="https://store.com/image.png" alt="image">
+        <p>Cup Set</p>
+        <span>Rs 450</span>
+        </div></div>`,
+        onSuccess: (options) => {
+            window.location.href = "./payment.html";
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+    };
+
+    document.getElementById('checkout-btn').onclick = async function () {
+        try {
+            if (typeof GetPay === "undefined") {
+                console.error("GetPay is not loaded. Ensure the script URL is correct.");
+                return;
+            }
+            console.log("GetPay is loaded:", typeof GetPay);
+            options.baseUrl = "https://ecom-getpay.nchl.com.np/ecom-web-checkout/v1/secure-merchant/transactions"
+            const getpay = new GetPay(options);
+            console.log("GetPay instance:", getpay);
+
+            const response = await getpay.initialize();
+            console.log("Response from GetPay:", response);
+
+        } catch (error) {
+            console.error("Error initializing GetPay:", error);
+        }
+    };
+</script>
+</body>
+</html>
